@@ -1,0 +1,239 @@
+<div class="container">
+    <!-- Buscador -->
+    <!-- Barra de navegación superior -->
+<!-- Barra de navegación superior -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 mb-4">
+  <div class="container-fluid d-flex flex-nowrap align-items-center justify-content-between">
+    <!-- Sección Izquierda: Agrupar por, Tendencias y Recomendaciones -->
+    <div class="d-flex align-items-center">
+      <!-- Dropdown Agrupar por -->
+      <div class="dropdown me-3">
+        <button class="btn btn-danger" type="button" (click)="toggleDropdown()">
+          Agrupar por ▼
+        </button>
+        <ul #dropdownMenu class="dropdown-menu">
+          <li><a class="dropdown-item" (click)="toggleAgruparPorCategoria()">Categoría</a></li>
+          <li><a class="dropdown-item" (click)="toggleAgruparPorGenero()">Género</a></li>
+          <li><a class="dropdown-item" (click)="ordenarAlfabeticamente()">Orden Alfabético</a></li>
+          <li><a class="dropdown-item text-danger fw-bold" (click)="quitarAgrupacion()">Quitar Agrupación</a></li>
+        </ul>
+      </div>
+      <!-- Botones para Tendencias y Recomendaciones -->
+      <button class="btn btn-danger me-2" (click)="toggleTendenciasModal()">Tendencias</button>
+      <button *ngIf="isLoggedIn" class="btn btn-danger me-2" (click)="toggleRecomendacionModal()">Recomendado para ti</button>
+    </div>
+
+    <!-- Sección Central: Buscador -->
+    <div class="flex-grow-1 d-flex justify-content-center">
+      <input type="text" [(ngModel)]="filtroTitulo" (input)="filtrarPeliculas()" 
+             class="form-control" placeholder="Buscar película..." style="max-width: 300px;">
+    </div>
+
+    <!-- Sección Derecha: Usuario y Carrito -->
+    <div class="d-flex align-items-center">
+      <span *ngIf="isLoggedIn" class="text-light me-2">¡Hola, {{ username }}!</span>
+      <i class="bi bi-person-circle fs-3 text-light me-3" (click)="toggleUserDropdown()"></i>
+      <!-- Dropdown de Usuario -->
+      <ul #userDropdownMenu class="dropdown-menu" style="display: none; position: absolute;">
+        <li *ngIf="!isLoggedIn"><a class="dropdown-item" (click)="goToRegister()">Registrarse</a></li>
+        <li *ngIf="!isLoggedIn"><a class="dropdown-item" (click)="goToLogin()">Iniciar sesión</a></li>
+        <li *ngIf="isLoggedIn"><a class="dropdown-item" (click)="goToEditProfile()">Editar perfil</a></li>
+        <li *ngIf="isLoggedIn" class="position-relative">
+          <a class="dropdown-item" (click)="toggleCompras()">Películas compradas</a>
+          <ul #purchasesDropdownMenu class="dropdown-menu dropdown-menu-end position-absolute" 
+              [ngStyle]="{'display': comprasAbierto ? 'block' : 'none', 'top': '100%', 'right': '0', 'min-width': '300px'}">
+            <li class="dropdown-item" *ngFor="let compra of compras">
+              <div class="d-flex align-items-center">
+                <img [src]="'http://localhost:8080/' + compra.pelicula.portada" 
+                     [alt]="compra.pelicula.titulo" 
+                     class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+                <span>{{ compra.pelicula.titulo }}</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+        <li *ngIf="isLoggedIn"><a class="dropdown-item text-danger fw-bold" (click)="logout()">Cerrar sesión</a></li>
+      </ul>
+      <i class="bi bi-cart fs-3 text-light me-3" (click)="toggleCarrito()"></i>
+      <span *ngIf="isLoggedIn && carrito && carrito.length > 0"
+        class="badge bg-danger position-absolute" style="top: -0.6rem; left: 67.5rem; transform: translate(-50%, 50%);">
+        {{ carrito.length }}
+      </span>
+      <!-- Dropdown de Carrito -->
+      <ul #cartDropdownMenu class="dropdown-menu dropdown-menu-end" style="display: none; position: absolute;">
+        <li class="dropdown-item" *ngFor="let item of carrito">
+          <div class="d-flex align-items-center">
+            <img [src]="'http://localhost:8080/' + item.pelicula.portada" 
+                 [alt]="item.pelicula.titulo" class="img-thumbnail me-2" style="width: 50px; height: 50px;">
+            <span>{{ item.pelicula.titulo }} - ${{ item.pelicula.precio }}</span>
+            <button class="btn btn-sm btn-danger ms-auto" (click)="eliminarDelCarrito(item.pelicula.id)">X</button>
+          </div>
+        </li>
+        <li class="dropdown-item disabled">Total: ${{ totalCarrito }}</li>
+        <li class="dropdown-item">
+          <button class="btn btn-success w-100" (click)="comprar()">Comprar</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Mostrar películas sin agrupar -->
+<div *ngIf="!agruparPorCategoria && !agruparPorGenero && !ordenAlfabetico" class="row row-cols-2 row-cols-md-4 g-4">
+  <div *ngFor="let pelicula of peliculasFiltradas" class="col">
+    <div class="card bg-dark text-white h-100" (click)="seleccionarPelicula(pelicula)">
+      <img [src]="'http://localhost:8080/' + pelicula.portada" [alt]="pelicula.titulo" class="card-img-top">
+      <div class="card-body text-center">
+        <h5 class="card-title">{{ pelicula.titulo }}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mostrar películas ordenadas alfabéticamente -->
+<div *ngIf="ordenAlfabetico" class="row row-cols-2 row-cols-md-4 g-4">
+  <div *ngFor="let pelicula of peliculasFiltradas" class="col">
+    <div class="card bg-dark text-white h-100" (click)="seleccionarPelicula(pelicula)">
+      <img [src]="'http://localhost:8080/' + pelicula.portada" [alt]="pelicula.titulo" class="card-img-top">
+      <div class="card-body text-center">
+        <h5 class="card-title">{{ pelicula.titulo }}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Películas agrupadas por categoría -->
+<div *ngIf="agruparPorCategoria">
+  <div *ngFor="let categoria of categoriasFiltradas" class="mb-4">
+    <h2 class="text-gray border-start border-danger ps-3">{{ categoria }}</h2>
+    <div class="d-flex overflow-auto pb-2">
+      <div *ngFor="let pelicula of obtenerPeliculasPorCategoria(categoria)" class="me-3">
+        <div class="card bg-dark text-white" style="width: 12rem;" (click)="seleccionarPelicula(pelicula)">
+          <img [src]="'http://localhost:8080/' + pelicula.portada" [alt]="pelicula.titulo" class="card-img-top">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ pelicula.titulo }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Películas agrupadas por género -->
+<div *ngIf="agruparPorGenero">
+  <div *ngFor="let genero of generosFiltrados" class="mb-4">
+    <h2 class="text-gray border-start border-danger ps-3">{{ genero }}</h2>
+    <div class="d-flex overflow-auto pb-2">
+      <div *ngFor="let pelicula of obtenerPeliculasPorGenero(genero)" class="me-3">
+        <div class="card bg-dark text-white" style="width: 12rem;" (click)="seleccionarPelicula(pelicula)">
+          <img [src]="'http://localhost:8080/' + pelicula.portada" [alt]="pelicula.titulo" class="card-img-top">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ pelicula.titulo }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    <!-- Detalle de la película seleccionada -->
+    <!-- Modal de Detalles de la Película -->
+<div *ngIf="peliculaSeleccionada" class="modal fade show d-block" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ peliculaSeleccionada.titulo }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarDetalle()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="'http://localhost:8080/' + peliculaSeleccionada.portada" class="img-fluid rounded">
+        <p class="mt-3">{{ peliculaSeleccionada.descripcion }}</p>
+        <ul class="list-group list-group-flush bg-dark">
+          <li class="list-group-item bg-dark text-white"><strong>Fecha de estreno:</strong> {{ peliculaSeleccionada.fecha_estreno }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Duración:</strong> {{ peliculaSeleccionada.duracion }} minutos</li>
+          <li class="list-group-item bg-dark text-white"><strong>Precio:</strong> ${{ peliculaSeleccionada.precio }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Estudio:</strong> {{ peliculaSeleccionada.studio || 'Desconocido' }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Categoría:</strong> {{ peliculaSeleccionada.category || 'No disponible' }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Directores:</strong> {{ obtenerDirectores() }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Actores:</strong> {{ obtenerActores() }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Géneros:</strong> {{ obtenerGeneros() }}</li>
+          <li class="list-group-item bg-dark text-white"><strong>Idiomas:</strong> {{ obtenerIdiomas() }}</li>
+        </ul>
+        <!-- Botón "+Añadir al carrito" en el modal de detalles -->
+        <button *ngIf="isLoggedIn" class="btn btn-danger mt-3" (click)="agregarAlCarrito(peliculaSeleccionada)">
+          + Añadir al carrito
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- Carrusel de Tendencias (global) -->
+<div *ngIf="tendenciasModalAbierto && tendencias?.masVendidas?.length > 0" class="carousel-container my-4">
+  <h5 class="text-center mb-3">Tendencias Globales</h5>
+  <div id="carouselTendencias" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div *ngFor="let peli of tendencias.masVendidas; let i = index" 
+           [ngClass]="{'carousel-item': true, 'active': i === 0}">
+         <img [src]="'http://localhost:8080/' + peli.portada" 
+              class="d-block mx-auto pelicula-carousel-img" 
+              alt="{{peli.titulo}}">
+         <div class="trending-caption text-center">
+            <p>{{peli.titulo}}</p>
+         </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselTendencias" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselTendencias" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
+  </div>
+  <!-- Sección para la película más vendida del mes -->
+  <div class="tendencias-mes mt-4 text-center" *ngIf="tendencias?.masVendidaMes">
+    <h6>Película Más Vendida del Mes</h6>
+    <img [src]="'http://localhost:8080/' + tendencias.masVendidaMes.portada" 
+         alt="{{ tendencias.masVendidaMes.titulo }}" 
+         class="d-block mx-auto pelicula-carousel-img" style="max-width: 150px;">
+    <p class="trending-caption">{{ tendencias.masVendidaMes.titulo }}</p>
+  </div>
+  <!-- Botón para cerrar el carrusel -->
+  <div class="text-center mt-2">
+    <button class="btn btn-outline-light" (click)="toggleTendenciasModal()">Cerrar Tendencias</button>
+  </div>
+</div>
+
+
+ <!-- Carrusel de Recomendaciones (solo para usuarios logueados) -->
+<div *ngIf="recomendacionModalAbierto" class="carousel-container my-4">
+  <h5 class="text-center mb-3">Recomendaciones para Ti</h5>
+  <div id="carouselRecomendaciones" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div *ngFor="let peli of recomendaciones; let i = index" 
+           [ngClass]="{'carousel-item': true, 'active': i === 0}">
+         <img [src]="'http://localhost:8080/' + peli.portada" 
+              class="d-block mx-auto pelicula-carousel-img" 
+              alt="{{peli.titulo}}">
+         <div class="trending-caption text-center">
+            <p>{{peli.titulo}}</p>
+         </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselRecomendaciones" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselRecomendaciones" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
+  </div>
+  <div class="text-center mt-2">
+    <button class="btn btn-outline-light" (click)="toggleRecomendacionModal()">Cerrar Recomendaciones</button>
+  </div>
+</div>

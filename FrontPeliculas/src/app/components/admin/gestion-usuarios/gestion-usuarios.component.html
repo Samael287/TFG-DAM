@@ -1,0 +1,92 @@
+<div class="container mt-4">
+    <h2 class="text-light text-center">Gestión de Usuarios</h2>
+    <button class="btn btn-danger mb-3" (click)="openModal()">Añadir Usuario</button>
+
+    <table class="table table-dark table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Email</th>
+          <th>Password</th>
+          <th>Rol</th>
+          <th>Tarjeta</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.nombre }}</td>
+          <td>{{ usuario.apellidos }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.password }}</td>
+          <td>{{ usuario.rol }}</td>
+          <td>{{ usuario.tarjeta?.numeroTarjeta ?? 'No asignada' }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-2" (click)="openModal(usuario)">Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteUsuario(usuario.id!, usuario.tarjeta)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade show" *ngIf="showModal" style="display: block; background: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white p-4">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ isEditing ? 'Editar Usuario' : 'Añadir Usuario' }}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" [(ngModel)]="selectedUsuario.nombre" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Apellidos</label>
+            <input type="text" [(ngModel)]="selectedUsuario.apellidos" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" [(ngModel)]="selectedUsuario.email" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" [(ngModel)]="selectedUsuario.password" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Rol</label>
+            <select class="form-control" [(ngModel)]="selectedUsuario.rol">
+              <option value="CLIENTE">Cliente</option>
+              <option value="ADMIN">Administrador</option>
+            </select>
+          </div>
+
+          <!-- Sección de Tarjeta -->
+          <div class="border p-3 mt-4">
+            <h5 class="text-light">Información de la Tarjeta</h5>
+            <div *ngIf="selectedUsuario.tarjeta">
+              <label class="form-label">Número de Tarjeta</label>
+              <input type="text" [(ngModel)]="selectedUsuario.tarjeta.numeroTarjeta" class="form-control">
+              <label class="form-label">Fecha de Caducidad</label>
+              <input type="date" [(ngModel)]="selectedUsuario.tarjeta.fechaCaducidad" class="form-control">
+              <label class="form-label">Número de Seguridad</label>
+              <input type="text" [(ngModel)]="selectedUsuario.tarjeta.numeroSeguridad" class="form-control">
+              <label class="form-label">Fondos Disponibles</label>
+              <input type="number" [(ngModel)]="selectedUsuario.tarjeta.fondosDisponibles" class="form-control">
+            </div>
+            <button class="btn btn-secondary" (click)="agregarTarjeta()" *ngIf="!selectedUsuario.tarjeta">Añadir Tarjeta</button>
+            <button class="btn btn-danger" (click)="eliminarTarjeta()" *ngIf="selectedUsuario.tarjeta">Eliminar Tarjeta</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="saveUsuario()">Guardar</button>
+        </div>
+      </div>
+    </div>
+</div>

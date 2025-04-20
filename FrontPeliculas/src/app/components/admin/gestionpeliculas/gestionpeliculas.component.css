@@ -1,0 +1,83 @@
+/* Estilos para la gestión de películas con temática de Netflix */
+body {
+    background-color: #141414;
+    color: white;
+  }
+  
+  .container {
+    max-width: 900px;
+  }
+  
+  .table {
+    background-color: #222;
+    color: white;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .table th {
+    background-color: #e50914;
+    color: white;
+    text-align: center;
+  }
+  
+  .table td {
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .btn-danger {
+    background-color: #e50914;
+    border: none;
+  }
+  
+  .btn-danger:hover {
+    background-color: #ff1a1a;
+  }
+  
+  .btn-warning {
+    background-color: #ffa500;
+    border: none;
+  }
+  
+  .btn-warning:hover {
+    background-color: #ffba00;
+  }
+  
+  .modal-content {
+    background-color: #222;
+    color: white;
+  }
+  
+  .modal-header {
+    border-bottom: 1px solid #444;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #444;
+  }
+  
+  .form-control {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+  }
+  
+  .form-control:focus {
+    background-color: #444;
+    color: white;
+    border-color: #e50914;
+  }
+  
+  select.form-control {
+    height: auto;
+  }
+  
+  .modal-dialog {
+    max-width: 700px;
+  }
+  
+  .modal-body label {
+    font-weight: bold;
+  }
+  

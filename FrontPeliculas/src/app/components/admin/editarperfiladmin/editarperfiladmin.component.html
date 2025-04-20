@@ -1,0 +1,38 @@
+<div class="container"> 
+    <h2 class="text-center">Editar Perfil</h2>
+    
+    <!-- Verificación de contraseña -->
+    <div *ngIf="!verificado">
+      <label for="passwordActual">Introduce tu contraseña actual:</label>
+      <input type="password" class="form-control" [(ngModel)]="passwordActual" name="passwordActual">
+      <button class="btn btn-primary mt-2" (click)="verificarPassword()">Verificar</button>
+    </div>
+  
+    <!-- Formulario de edición (si se ha verificado la contraseña) -->
+    <div *ngIf="verificado">
+        <form (ngSubmit)="actualizarPerfil()">
+            <div class="mb-3">
+            <label>Nombre:</label>
+            <input type="text" class="form-control" [(ngModel)]="usuario.nombre" name="nombre">
+            </div>
+            <div class="mb-3">
+            <label>Apellidos:</label>
+            <input type="text" class="form-control" [(ngModel)]="usuario.apellidos" name="apellidos">
+            </div>
+            <div class="mb-3">
+            <label>Email:</label>
+            <input type="email" class="form-control" [(ngModel)]="usuario.email" name="email">
+            </div>
+            <div class="mb-3">
+            <label>Nueva Contraseña (opcional):</label>
+            <input type="password" class="form-control" [(ngModel)]="nuevaPassword" name="nuevaPassword">
+            </div>
+            <div class="mb-3">
+            <label>Confirmar Nueva Contraseña:</label>
+            <input type="password" class="form-control" [(ngModel)]="confirmarPassword" name="confirmarPassword">
+            </div>
+            <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        </form>
+    </div>
+</div>
+        

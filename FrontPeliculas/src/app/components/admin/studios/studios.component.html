@@ -1,0 +1,43 @@
+<div class="container mt-4">
+    <h2 class="text-light text-center">Studios</h2>
+    <button class="btn btn-danger mb-3" (click)="openModal()">Añadir Studio</button>
+  
+    <table class="table table-dark table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Studio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let studio of studios">
+          <td>{{ studio.id }}</td>
+          <td>{{ studio.studio }}</td>
+          <td>
+            <button class="btn btn-warning me-2" (click)="openModal(studio)">Editar</button>
+            <button class="btn btn-danger" (click)="deleteStudio(studio.id!)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade show" *ngIf="showModal" style="display: block; background: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white p-4">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ isEditing ? 'Editar Studio' : 'Añadir Studio' }}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" [(ngModel)]="selectedStudio.studio" class="form-control" placeholder="Nombre del Studio">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="saveStudio()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>

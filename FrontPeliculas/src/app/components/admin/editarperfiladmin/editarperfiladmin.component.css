@@ -1,0 +1,28 @@
+.container {
+    max-width: 500px;
+    background-color: rgba(20, 20, 20, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0px 0px 15px rgba(255, 0, 0, 0.5);
+  }
+  
+  h2 {
+    text-align: center;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  button {
+    width: 100%;
+    margin-top: 10px;
+  }
+  

@@ -1,0 +1,32 @@
+body {
+    background-color: #141414;
+    color: white;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .card {
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .btn-close {
+    filter: invert(1);
+  }
+  

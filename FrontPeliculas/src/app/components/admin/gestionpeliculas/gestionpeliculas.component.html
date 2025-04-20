@@ -1,0 +1,140 @@
+<div class="container mt-4">
+    <h2 class="text-light text-center">Gestión de Películas</h2>
+    <button class="btn btn-danger mb-3" (click)="openModal()">Añadir Película</button>
+  
+    <table class="table table-dark table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Duración</th>
+          <th>Fecha de Estreno</th>
+          <th>Precio</th>
+          <th>Estudio</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pelicula of peliculas">
+          <td>{{ pelicula.id }}</td>
+          <td>{{ pelicula.titulo }}</td>
+          <td>{{ pelicula.descripcion }}</td>
+          <td>{{ pelicula.duracion }} min</td>
+          <td>{{ pelicula.fecha_estreno }}</td>
+          <td>${{ pelicula.precio }}</td>
+          <td>{{ pelicula?.studio || 'Desconocido' }}</td>
+          <td>{{ pelicula?.category || 'No disponible' }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-2" (click)="openModal(pelicula)">Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="deletePelicula(pelicula.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade show" *ngIf="showModal" style="display: block; background: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark text-white p-4">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ isEditing ? 'Editar Película' : 'Añadir Película' }}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input type="text" [(ngModel)]="selectedPelicula.titulo" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea [(ngModel)]="selectedPelicula.descripcion" class="form-control"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Duración (minutos)</label>
+            <input type="number" [(ngModel)]="selectedPelicula.duracion" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Fecha de Estreno</label>
+            <input type="date" [(ngModel)]="selectedPelicula.fecha_estreno" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Precio</label>
+            <input type="number" [(ngModel)]="selectedPelicula.precio" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Portada</label>
+            <input type="file" class="form-control" (change)="onFileChange($event)">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Estudio</label>
+            <select class="form-control" [(ngModel)]="selectedPelicula.studio">
+              <option *ngFor="let studio of studios" [value]="studio.id">{{ studio.studio }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Categoría</label>
+            <select class="form-control" [(ngModel)]="selectedPelicula.category">
+              <option *ngFor="let category of categories" [value]="category.id">{{ category.category }}</option>
+            </select>
+          </div>
+          <!-- Actores -->
+<div class="mb-3">
+  <label class="form-label">Actores</label>
+  <select class="form-control" multiple [(ngModel)]="selectedPelicula.actores">
+    <option *ngFor="let actor of actores" [value]="actor.id" [selected]="selectedPelicula.actores.includes(actor.id)">
+      {{ actor.name }}
+    </option>
+  </select>
+</div>
+
+<!-- Directores -->
+<div class="mb-3">
+  <label class="form-label">Directores</label>
+  <select class="form-control" multiple [(ngModel)]="selectedPelicula.directores">
+    <option *ngFor="let director of directores" [value]="director.id" [selected]="selectedPelicula.directores.includes(director.id)">
+      {{ director.name }}
+    </option>
+  </select>
+</div>
+
+<!-- Flags -->
+<div class="mb-3">
+  <label class="form-label">Flags</label>
+  <select class="form-control" multiple [(ngModel)]="selectedPelicula.flagses">
+    <option *ngFor="let flag of flags" [value]="flag.id" [selected]="selectedPelicula.flagses.includes(flag.id)">
+      {{ flag.flags }}
+    </option>
+  </select>
+</div>
+
+<!-- Géneros -->
+<div class="mb-3">
+  <label class="form-label">Géneros</label>
+  <select class="form-control" multiple [(ngModel)]="selectedPelicula.genres">
+    <option *ngFor="let genre of genres" [value]="genre.id" [selected]="selectedPelicula.genres.includes(genre.id)">
+      {{ genre.genre }}
+    </option>
+  </select>
+</div>
+
+<!-- Idiomas -->
+<div class="mb-3">
+  <label class="form-label">Idiomas</label>
+  <select class="form-control" multiple [(ngModel)]="selectedPelicula.languages">
+    <option *ngFor="let language of languages" [value]="language.id" [selected]="selectedPelicula.languages.includes(language.id)">
+      {{ language.language }}
+    </option>
+  </select>
+</div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="savePelicula()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>

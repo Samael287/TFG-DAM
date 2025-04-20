@@ -1,0 +1,43 @@
+<div class="container mt-4">
+    <h2 class="text-light text-center">Languages</h2>
+    <button class="btn btn-danger mb-3" (click)="openModal()">Añadir Language</button>
+  
+    <table class="table table-dark table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Language</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let language of languages">
+          <td>{{ language.id }}</td>
+          <td>{{ language.language }}</td>
+          <td>
+            <button class="btn btn-warning me-2" (click)="openModal(language)">Editar</button>
+            <button class="btn btn-danger" (click)="deleteLanguage(language.id!)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade show" *ngIf="showModal" style="display: block; background: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white p-4">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ isEditing ? 'Editar Language' : 'Añadir Language' }}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" [(ngModel)]="selectedLanguage.language" class="form-control" placeholder="Nombre del Language">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="saveLanguage()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
